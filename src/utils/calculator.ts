@@ -89,12 +89,19 @@ function operation(mem: Mem, operation: string): Mem {
     // # Operation on null current state
     if (mem.curr === null) {
         if (mem.sav) {
-            mem.curr = mem.sav
+            mem.curr = mem.sav.replace('-','')
+            if (mem.sav.indexOf('-') != -1) {
+                mem.isNegative = true
+            }
+            
             mem.sav = null
+
         }else {
             return {...mem, history: mem.history?.replace(/.$/, operation)}
         }
     }
+
+    
 
     // Count decimal places for precision
     mem = countDecimals(mem.curr, mem)
@@ -139,11 +146,12 @@ function answer(mem: Mem): Mem {
                 }
             }
             
-
+            // More than max 32bit number
             if (evaluated > maxInt) {
                 evaluated = maxInt
             }
     
+            // less then mix 32bit number
             if (evaluated < minInt) {
                 evaluated = minInt
             }
@@ -168,7 +176,7 @@ function clearAll(): Mem {
 }
 
 function percent(mem: Mem): Mem {
-    return {history: null, curr: null, sav: String((Number(mem.curr)/100))}
+    return {history: null, curr: null, sav: String((Number(mem.curr??mem.sav)/100))}
 }
 
 export {
